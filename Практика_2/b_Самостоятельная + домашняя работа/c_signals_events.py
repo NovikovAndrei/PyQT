@@ -83,20 +83,21 @@ class Window(QtWidgets.QWidget):
         self.ui.plainTextEdit.appendPlainText(f"Отчет сформирован: {time.ctime()}")
 
     def screenCount(self):
-        self.ui.plainTextEdit.appendPlainText("screenCount")
-
-    def screenCount(self):
-        self.ui.plainTextEdit.appendPlainText("screenCount")
+        screencount = QtGui.QGuiApplication.screens()
+        self.ui.plainTextEdit.appendPlainText(f"Количество экранов: {len(screencount)}")
 
     def currentWindow(self):
         current_main_window = str(QtWidgets.QApplication.activeWindow())
         self.ui.plainTextEdit.appendPlainText(f"Текущее основное окно: {current_main_window}")
 
     def screenResolutinon(self):
-        self.ui.plainTextEdit.appendPlainText("screenResolutinon")
+        desktop = QtGui.QGuiApplication.primaryScreen()
+        self.ui.plainTextEdit.appendPlainText(f"Разрешение экрана: {desktop.size()}")
+        primary_screen = QtGui.QGuiApplication.primaryScreen()
 
     def currentScreen(self):
-        self.ui.plainTextEdit.appendPlainText("currentScreen")
+        desktop = QtWidgets.QApplication.screenAt(self.pos())
+        self.ui.plainTextEdit.appendPlainText(f"Наименование текущего экрана: {desktop.name()}")
 
     def currentSizeWindow(self):
         self.ui.plainTextEdit.appendPlainText("Текущий размер окна: " + str(self.size()))
