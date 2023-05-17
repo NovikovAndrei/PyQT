@@ -13,6 +13,7 @@ import time
 import requests
 from PySide6 import QtWidgets, QtCore
 from form_weather import Ui_FormWeather
+from a_threads import WeatherHandler
 
 
 class WindowWeather(QtWidgets.QWidget):
@@ -35,6 +36,9 @@ class WindowWeather(QtWidgets.QWidget):
 
         self.ui_s.lineEditLatitude.editingFinished.connect(self.validateLatitude)
         self.ui_s.lineEditLongitude.editingFinished.connect(self.validateLongitude)
+        self.ui_s.lineEditLatitude.textChanged.connect(self.stopGetData)
+        self.ui_s.lineEditLongitude.textChanged.connect(self.stopGetData)
+
 
     def updateDelay(self):
         if self.ui_s.radioButton3.isChecked():
@@ -86,9 +90,14 @@ class WindowWeather(QtWidgets.QWidget):
             else:
                 self.ui_s.lineEditLatitude.setStyleSheet("background-color: red;")
                 self.ui_s.textEditData.setText("Введите корректную широту")
+                self.stopGetData()
+
         except ValueError:
             self.ui_s.lineEditLatitude.setStyleSheet("background-color: red;")
             self.ui_s.textEditData.setText("Введите корректные широту")
+            self.stopGetData()
+
+
 
     def validateLongitude(self):
         longitude_text = self.ui_s.lineEditLongitude.text()
@@ -99,14 +108,11 @@ class WindowWeather(QtWidgets.QWidget):
             else:
                 self.ui_s.lineEditLongitude.setStyleSheet("background-color: red;")
                 self.ui_s.textEditData.setText("Введите корректную долготу")
-                self.stopGetData()
         except ValueError:
             self.ui_s.lineEditLongitude.setStyleSheet("background-color: red;")
             self.ui_s.textEditData.setText("Введите корректные долготу")
-            self.stopGetData()
 
 class WeatherHandler(QtCore.QThread):
-    # TODO Пропишите сигналы, которые считаете нужными
     weatherInfoReceived = QtCore.Signal(dict)
 
     def __init__(self, lat, lon, parent=None):
@@ -117,13 +123,6 @@ class WeatherHandler(QtCore.QThread):
         self.__status = None
 
     def setDelay(self, delay) -> None:
-        """
-        Метод для установки времени задержки обновления сайта
-
-        :param delay: время задержки обновления информации о доступности сайта
-        :return: None
-        """
-
         self.__delay = delay
 
     def setStatus(self, val):

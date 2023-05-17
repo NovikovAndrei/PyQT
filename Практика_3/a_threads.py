@@ -6,6 +6,7 @@ import time
 
 import psutil
 from PySide6 import QtCore
+import requests
 
 
 class SystemInfo(QtCore.QThread):
@@ -28,6 +29,7 @@ class SystemInfo(QtCore.QThread):
 
 class WeatherHandler(QtCore.QThread):
     # TODO Пропишите сигналы, которые считаете нужными
+    weatherInfoReceived = QtCore.Signal(dict)
 
     def __init__(self, lat, lon, parent=None):
         super().__init__(parent)
@@ -46,14 +48,13 @@ class WeatherHandler(QtCore.QThread):
 
         self.__delay = delay
 
-    def run(self) -> None:
-        # TODO настройте метод для корректной работы
+    def setStatus(self, val):
+        self.__status = val
 
+
+    def run(self) -> None:
         while self.__status:
-            # TODO Примерный код ниже
-            """
             response = requests.get(self.__api_url)
             data = response.json()
-            ваш_сигнал.emit(data)
-            sleep(delay)
-            """
+            self.weatherInfoReceived.emit(data)
+            time.sleep(self.__delay)
