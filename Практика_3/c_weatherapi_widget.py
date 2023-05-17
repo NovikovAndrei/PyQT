@@ -36,8 +36,8 @@ class WindowWeather(QtWidgets.QWidget):
 
         self.ui_s.lineEditLatitude.editingFinished.connect(self.validateLatitude)
         self.ui_s.lineEditLongitude.editingFinished.connect(self.validateLongitude)
-        self.ui_s.lineEditLatitude.textChanged.connect(self.stopGetData)
-        self.ui_s.lineEditLongitude.textChanged.connect(self.stopGetData)
+        self.ui_s.lineEditLatitude.textChanged.connect(self.stopGetData2)
+        self.ui_s.lineEditLongitude.textChanged.connect(self.stopGetData2)
 
 
     def updateDelay(self):
@@ -52,12 +52,19 @@ class WindowWeather(QtWidgets.QWidget):
         # Window.lat = float(self.ui_s.lineEditLatitude.text())
         # Window.lon = float(self.ui_s.lineEditLongitude.text())
         # self.WeatherHandler = WeatherHandler(Window.lat, Window.lon)
+        self.ui_s.textEditData.clear()
         self.WeatherHandler.setStatus(True)
         self.ui_s.pushButtonGetData.setEnabled(False)
         self.ui_s.pushButtonStopGetData.setEnabled(True)
         self.WeatherHandler.start()
 
     def stopGetData(self):
+        self.WeatherHandler.setStatus(None)
+        self.ui_s.pushButtonStopGetData.setEnabled(False)
+        self.ui_s.pushButtonGetData.setEnabled(True)
+
+    def stopGetData2(self):
+        self.ui_s.textEditData.setText('<font color="red">Координаты изменены</font>')
         self.WeatherHandler.setStatus(None)
         self.ui_s.pushButtonStopGetData.setEnabled(False)
         self.ui_s.pushButtonGetData.setEnabled(True)
@@ -89,12 +96,12 @@ class WindowWeather(QtWidgets.QWidget):
                 self.ui_s.lineEditLatitude.setStyleSheet("")
             else:
                 self.ui_s.lineEditLatitude.setStyleSheet("background-color: red;")
-                self.ui_s.textEditData.setText("Введите корректную широту")
+                self.ui_s.textEditData.setText('<font color="red">Введите корректные координаты</font>')
                 self.stopGetData()
 
         except ValueError:
             self.ui_s.lineEditLatitude.setStyleSheet("background-color: red;")
-            self.ui_s.textEditData.setText("Введите корректные широту")
+            self.ui_s.textEditData.setText('<font color="red">Введите корректные координаты</font>')
             self.stopGetData()
 
 
@@ -107,10 +114,10 @@ class WindowWeather(QtWidgets.QWidget):
                 self.ui_s.lineEditLongitude.setStyleSheet("")
             else:
                 self.ui_s.lineEditLongitude.setStyleSheet("background-color: red;")
-                self.ui_s.textEditData.setText("Введите корректную долготу")
+                self.ui_s.textEditData.setText('<font color="red">Введите корректные координаты</font>')
         except ValueError:
             self.ui_s.lineEditLongitude.setStyleSheet("background-color: red;")
-            self.ui_s.textEditData.setText("Введите корректные долготу")
+            self.ui_s.textEditData.setText('<font color="red">Введите корректные координаты</font>')
 
 class WeatherHandler(QtCore.QThread):
     weatherInfoReceived = QtCore.Signal(dict)
