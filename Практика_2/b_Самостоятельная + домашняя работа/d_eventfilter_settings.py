@@ -17,7 +17,7 @@
    и значение LCDNumber в QSettings, при перезапуске программы выводить
    в него соответствующие значения
 """
-
+import psutil
 from PySide6 import QtWidgets, QtCore
 from ui.d_eventfilter_settings import Ui_Form
 
