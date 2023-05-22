@@ -25,6 +25,7 @@ class WindowSystem(QtWidgets.QWidget):
         self.ui_s = Ui_FormSystem()
         self.ui_s.setupUi(self)
         self.initThreads()
+        # self.ui_s.progressBarCPU.setStyleSheet("QProgressBar::chunk { background-color: red; }")
 
         self.ui_s.horizontalSlider.valueChanged.connect(self.valueChanged)
 
@@ -35,12 +36,26 @@ class WindowSystem(QtWidgets.QWidget):
 
     def updateProgressBarCPURAM(self, info):
         cpu_value, ram_value = info
+        if 50 < ram_value < 80:
+            self.ui_s.progressBarRAM.setStyleSheet("QProgressBar::chunk { background-color: yellow; }")
+        elif ram_value > 80:
+            self.ui_s.progressBarRAM.setStyleSheet("QProgressBar::chunk { background-color: red; }")
+        else:
+            self.ui_s.progressBarRAM.setStyleSheet("")
+        if 50 < cpu_value < 80:
+            self.ui_s.progressBarCPU.setStyleSheet("QProgressBar::chunk { background-color: yellow; }")
+        elif cpu_value > 80:
+            self.ui_s.progressBarCPU.setStyleSheet("QProgressBar::chunk { background-color: red; }")
+        else:
+            self.ui_s.progressBarCPU.setStyleSheet("")
         self.ui_s.progressBarCPU.setValue(cpu_value)
         self.ui_s.progressBarRAM.setValue(ram_value)
 
     def valueChanged(self, value):
         self.ui_s.lcdNumber.display(value)
         self.SystemInfo.delay = value
+
+
 
 
 if __name__ == "__main__":
