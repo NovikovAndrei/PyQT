@@ -23,7 +23,7 @@ class Ui_FormMenuNotes(object):
     def setupUi(self, FormMenuNotes):
         if not FormMenuNotes.objectName():
             FormMenuNotes.setObjectName(u"FormMenuNotes")
-        FormMenuNotes.resize(992, 661)
+        FormMenuNotes.resize(1018, 740)
         self.verticalLayout = QVBoxLayout(FormMenuNotes)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.labelNotes = QLabel(FormMenuNotes)
@@ -35,7 +35,19 @@ class Ui_FormMenuNotes(object):
         self.verticalLayout.addWidget(self.labelNotes)
 
         self.treeWidgetNotes = QTreeWidget(FormMenuNotes)
+        font1 = QFont()
+        font1.setBold(True)
+        __qtreewidgetitem = QTreeWidgetItem()
+        __qtreewidgetitem.setFont(4, font1);
+        __qtreewidgetitem.setFont(3, font1);
+        __qtreewidgetitem.setFont(2, font1);
+        __qtreewidgetitem.setFont(1, font1);
+        __qtreewidgetitem.setFont(0, font1);
+        self.treeWidgetNotes.setHeaderItem(__qtreewidgetitem)
         self.treeWidgetNotes.setObjectName(u"treeWidgetNotes")
+        font2 = QFont()
+        font2.setPointSize(11)
+        self.treeWidgetNotes.setFont(font2)
 
         self.verticalLayout.addWidget(self.treeWidgetNotes)
 
@@ -56,6 +68,11 @@ class Ui_FormMenuNotes(object):
 
         self.horizontalLayout.addWidget(self.pushButtonOpenNote)
 
+        self.pushButtonEditNote = QPushButton(FormMenuNotes)
+        self.pushButtonEditNote.setObjectName(u"pushButtonEditNote")
+
+        self.horizontalLayout.addWidget(self.pushButtonEditNote)
+
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
@@ -69,8 +86,7 @@ class Ui_FormMenuNotes(object):
         FormMenuNotes.setWindowTitle(QCoreApplication.translate("FormMenuNotes", u"\u041c\u043e\u0438 \u0437\u0430\u043c\u0435\u0442\u043a\u0438", None))
         self.labelNotes.setText(QCoreApplication.translate("FormMenuNotes", u"\u041c\u043e\u0438 \u0417\u0430\u043c\u0435\u0442\u043a\u0438:", None))
         ___qtreewidgetitem = self.treeWidgetNotes.headerItem()
-        ___qtreewidgetitem.setText(5, QCoreApplication.translate("FormMenuNotes", u"\u041f\u0440\u0435\u0434\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440", None));
-        ___qtreewidgetitem.setText(4, QCoreApplication.translate("FormMenuNotes", u"\u0414\u0430\u0442\u0430 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u044f", None));
+        ___qtreewidgetitem.setText(4, QCoreApplication.translate("FormMenuNotes", u"\u041f\u0440\u0435\u0434\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440", None));
         ___qtreewidgetitem.setText(3, QCoreApplication.translate("FormMenuNotes", u"\u0421\u0442\u0430\u0442\u0443\u0441", None));
         ___qtreewidgetitem.setText(2, QCoreApplication.translate("FormMenuNotes", u"\u0421\u0440\u043e\u043a \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u044f", None));
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("FormMenuNotes", u"\u0414\u0430\u0442\u0430 \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f", None));
@@ -78,5 +94,6 @@ class Ui_FormMenuNotes(object):
         self.pushButtonNewNote.setText(QCoreApplication.translate("FormMenuNotes", u"\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u043d\u043e\u0432\u0443\u044e \u0437\u0430\u043c\u0435\u0442\u043a\u0443", None))
         self.pushButtonDeleteNote.setText(QCoreApplication.translate("FormMenuNotes", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0437\u0430\u043c\u0435\u0442\u043a\u0443", None))
         self.pushButtonOpenNote.setText(QCoreApplication.translate("FormMenuNotes", u"\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0437\u0430\u043c\u0435\u0442\u043a\u0443", None))
+        self.pushButtonEditNote.setText(QCoreApplication.translate("FormMenuNotes", u"\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0437\u0430\u043c\u0435\u0442\u043a\u0443", None))
     # retranslateUi
 

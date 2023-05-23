@@ -11,10 +11,23 @@ class WindowMenu(QtWidgets.QWidget):
 
         self.ui_menu = Ui_FormMenuNotes()
         self.ui_menu.setupUi(self)
+        self.setStyleSheet("""
+            WindowMenu {
+                background-color: #eef2f5; /* Замените на желаемый цвет фона */
+            }
+        """)
+        self.ui_menu.treeWidgetNotes.setStyleSheet("background-color: #eef2f5;")  # Замените на желаемый цвет фона
+
+        self.ui_menu.treeWidgetNotes.setColumnWidth(0, 200)  # Устанавливает ширину первого столбца в 200 пикселей
+        self.ui_menu.treeWidgetNotes.setColumnWidth(1, 150)  # Устанавливает ширину второго столбца в 150 пикселей
+        self.ui_menu.treeWidgetNotes.setColumnWidth(2, 150)  # Устанавливает ширину третьего столбца в 150 пикселей
+        self.ui_menu.treeWidgetNotes.setColumnWidth(3, 100)  # Устанавливает ширину четвертого столбца в 100 пикселей
 
         self.ui_menu.pushButtonNewNote.clicked.connect(self.createNewNote)
         self.ui_menu.pushButtonDeleteNote.clicked.connect(self.deleteNote)
         self.ui_menu.pushButtonOpenNote.clicked.connect(self.openNote)
+        self.ui_menu.treeWidgetNotes.itemDoubleClicked.connect(self.openNoteDoubleClick)
+        self.ui_menu.pushButtonEditNote.clicked.connect(self.editNote)
 
         # Загрузка заметок из файла при запуске
         self.loadNotes()
@@ -30,7 +43,7 @@ class WindowMenu(QtWidgets.QWidget):
         new_item.setText(1, note[2])
         new_item.setText(2, note[3])
         new_item.setText(3, note[4])
-        new_item.setText(5, note[1])
+        new_item.setText(4, note[1])
         if note[4] == "Выполнено":
             new_item.setBackground(3, QtGui.QBrush(QtGui.QColor(0, 255, 0)))
         elif note[4] == "Не выполнено":
@@ -49,7 +62,7 @@ class WindowMenu(QtWidgets.QWidget):
         for index in range(self.ui_menu.treeWidgetNotes.topLevelItemCount()):
             item = self.ui_menu.treeWidgetNotes.topLevelItem(index)
             header = item.text(0)
-            note = item.text(5)
+            note = item.text(4)
             creation_date = item.text(1)
             deadline = item.text(2)
             status = item.text(3)
@@ -78,7 +91,7 @@ class WindowMenu(QtWidgets.QWidget):
                 new_item.setText(1, note["creation_date"])
                 new_item.setText(2, note["deadline"])
                 new_item.setText(3, note["status"])
-                new_item.setText(5, note["note"])
+                new_item.setText(4, note["note"])
                 if note["status"] == "Выполнено":
                     new_item.setBackground(3, QtGui.QBrush(QtGui.QColor(0, 255, 0)))
                 elif note["status"] == "Не выполнено":
@@ -132,24 +145,79 @@ class WindowMenu(QtWidgets.QWidget):
 
         # Извлечение данных заметки
         header = selected_item.text(0)
-        note = selected_item.text(5)
+        note = selected_item.text(4)
         creation_date = selected_item.text(1)
         deadline = selected_item.text(2)
         status = selected_item.text(3)
 
-        # Здесь вы можете выполнить дополнительные действия
-        # для открытия заметки, например, создать новое окно и передать данные
-
-        # Пример создания нового окна и передачи данных
         note_window = QtWidgets.QMessageBox()
         note_window.setIcon(QtWidgets.QMessageBox.Information)
-        note_window.setWindowTitle("Открыть заметку")
-        note_window.setText(f"Заголовок: {header}\n"
-                            f"Заметка: {note}\n"
+        note_window.setWindowTitle(header)
+        note_window.setText(
+                            f"{note}\n"
                             f"Дата создания: {creation_date}\n"
                             f"Срок выполнения: {deadline}\n"
                             f"Статус: {status}")
         note_window.exec()
+
+    def openNoteDoubleClick(self, item, column):
+        self.openNote()
+
+
+    def editNote(self):
+        selected_items = self.ui_menu.treeWidgetNotes.selectedItems()
+        if not selected_items:
+            error_box = QtWidgets.QMessageBox()
+            error_box.setIcon(QtWidgets.QMessageBox.Warning)
+            error_box.setWindowTitle("Ошибка")
+            error_box.setText("Выберите заметку для редактирования!")
+            error_box.exec()
+            return
+
+        # Получение выбранного элемента
+        selected_item = selected_items[0]
+
+        # Получение индекса выбранного элемента
+        index = self.ui_menu.treeWidgetNotes.indexOfTopLevelItem(selected_item)
+
+        # Извлечение данных заметки
+        header = selected_item.text(0)
+        note = selected_item.text(4)
+        creation_date = selected_item.text(1)
+        deadline = selected_item.text(2)
+        status = selected_item.text(3)
+
+        # Создание экземпляра окна редактирования заметки
+        edit_note_window = WindowNewNote(self)
+        edit_note_window.ui_newNote.lineEditHeader.setText(header)
+        edit_note_window.ui_newNote.plainTextEditNote.setPlainText(note)
+        edit_note_window.ui_newNote.dateTimeEditDeadline.setDateTime(
+            datetime.datetime.strptime(deadline, "%d.%m.%Y %H:%M"))
+        if status == "Выполнено":
+            edit_note_window.ui_newNote.radioButtonDone.setChecked(True)
+        else:
+            edit_note_window.ui_newNote.radioButtonNotDone.setChecked(True)
+
+        # Обновление заметки после редактирования
+        edit_note_window.saveNote.connect(lambda note: self.updateNoteItem(index, note))
+        edit_note_window.exec()
+
+    def updateNoteItem(self, index, note):
+        item = self.ui_menu.treeWidgetNotes.topLevelItem(index)
+        item.setText(0, note[0]) #header_text
+        item.setText(4, note[1]) #note_text
+        item.setText(3, note[4]) #status
+        item.setText(2, note[3]) #deadline_text
+        if note[4] == "Выполнено":
+            item.setBackground(3, QtGui.QBrush(QtGui.QColor(0, 255, 0)))
+        elif note[4] == "Не выполнено":
+            item.setBackground(3, QtGui.QBrush(QtGui.QColor(255, 0, 0)))
+        print(note)
+        # Сохранение заметок после обновления
+
+        self.saveNotes()
+
+
 
 class WindowNewNote(QtWidgets.QDialog):
     saveNote = QtCore.Signal(list)  # Определение сигнала
@@ -167,7 +235,8 @@ class WindowNewNote(QtWidgets.QDialog):
     def handleSave(self):
         header_text = self.ui_newNote.lineEditHeader.text()
         if len(self.ui_newNote.plainTextEditNote.toPlainText()) > 20:
-            note_text = f"{self.ui_newNote.plainTextEditNote.toPlainText()[:20]}..."
+            # note_text = f"{self.ui_newNote.plainTextEditNote.toPlainText()[:20]}..."
+            note_text = self.ui_newNote.plainTextEditNote.toPlainText()
         else:
             note_text = self.ui_newNote.plainTextEditNote.toPlainText()[:20]
         creationDate = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
@@ -194,6 +263,8 @@ class WindowNewNote(QtWidgets.QDialog):
             self.ui_newNote.plainTextEditNote.clear()
             self.ui_newNote.lineEditHeader.clear()
             self.ui_newNote.dateTimeEditDeadline.setDateTime(datetime.datetime.now())
+
+
 
 
 if __name__ == "__main__":

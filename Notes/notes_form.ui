@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>992</width>
-    <height>661</height>
+    <width>1018</width>
+    <height>740</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,34 +28,59 @@
    </item>
    <item>
     <widget class="QTreeWidget" name="treeWidgetNotes">
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
      <column>
       <property name="text">
        <string>Название</string>
+      </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
       </property>
      </column>
      <column>
       <property name="text">
        <string>Дата создания</string>
       </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
      </column>
      <column>
       <property name="text">
        <string>Срок выполнения</string>
+      </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
       </property>
      </column>
      <column>
       <property name="text">
        <string>Статус</string>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Дата выполнения</string>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
       </property>
      </column>
      <column>
       <property name="text">
        <string>Предпросмотр</string>
+      </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
       </property>
      </column>
     </widget>
@@ -80,6 +105,13 @@
       <widget class="QPushButton" name="pushButtonOpenNote">
        <property name="text">
         <string>Открыть заметку</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonEditNote">
+       <property name="text">
+        <string>Редактировать заметку</string>
        </property>
       </widget>
      </item>
