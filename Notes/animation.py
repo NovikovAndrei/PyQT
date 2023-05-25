@@ -2,9 +2,6 @@ import time
 
 from PySide6 import QtCore, QtWidgets, QtGui
 
-
-
-
 class LoadScreen(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -25,23 +22,16 @@ class LoadScreen(QtWidgets.QWidget):
 
         self.hide()  # скрываем по умолчанию
 
-        self.movie = QtGui.QMovie("cat.gif")
+        self.movie = QtGui.QMovie()
+
 
         labelAnimation = QtWidgets.QLabel()
         labelAnimation.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        labelAnimation.setScaledContents(True)
         labelAnimation.setMovie(self.movie)
-
-        labelLoad = QtWidgets.QLabel("Создаю заметку...")
-        labelLoad.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-
         layout = QtWidgets.QVBoxLayout()
-        layout.addSpacerItem(QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                                   QtWidgets.QSizePolicy.Policy.Expanding))
         layout.addWidget(labelAnimation)
-        layout.addWidget(labelLoad)
-        layout.addSpacerItem(QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                                   QtWidgets.QSizePolicy.Policy.Expanding))
-        layout.setContentsMargins(0, 0, 0, 0)
+
 
         self.setLayout(layout)
 
@@ -68,74 +58,37 @@ class LoadScreen(QtWidgets.QWidget):
         self.movie.stop()
 
 
+    def setGifPath(self, path: str) -> None:
+        """
+        Установка пути к GIF-файлу
+
+        :param path: путь к GIF-файлу
+        :return: None
+        """
+        self.movie.setFileName(path)
+
+
 
 class HandleThread(QtCore.QThread):
     sending = QtCore.Signal(str)
 
+    def __init__(self, delay=3):
+        super().__init__()
+        self.delay = delay
+
+    def set_delay(self, delay):
+        self.delay = delay
+
     def run(self):
-        time.sleep(5)
-    #     self.sending.emit("Данные загружены")
+        time.sleep(self.delay)
 
 
+class SplashScreen(QtWidgets.QSplashScreen):
+    """
+    Создание класса на базе QSplashScreen для отключения события mousePressEvent
+    """
+
+    def mousePressEvent(self, arg__1: QtGui.QMouseEvent) -> None:
+        pass
 
 
-
-class Window(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.initUi()
-
-        self.load_screen = LoadScreen(self)
-        self.handleThread = HandleThread()
-
-        self.initSignals()
-
-    def initUi(self) -> None:
-        """
-        Инициализация Ui
-
-        :return: None
-        """
-
-        self.resize(300, 300)
-
-        self.label = QtWidgets.QLabel("...")
-        self.button = QtWidgets.QPushButton("Загрузить данные")
-
-        layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(self.label)
-        layout.addWidget(self.button)
-
-        self.setLayout(layout)
-
-    def initSignals(self) -> None:
-        """
-        Инициализация сигналов
-
-        :return: None
-        """
-
-        self.button.clicked.connect(self.loadData)
-
-        self.handleThread.started.connect(self.load_screen.startAnimation)
-        self.handleThread.finished.connect(self.load_screen.stopAnimation)
-        self.handleThread.sending.connect(self.label.setText)
-
-    def loadData(self) -> None:
-        """
-        Загрузка данных
-
-        :return: None
-        """
-
-        self.handleThread.start()
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication()
-
-    window = Window()
-    window.show()
-
-    app.exec()
